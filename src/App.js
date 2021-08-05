@@ -37,8 +37,131 @@ function App() {
         return parseInt(h, 16)
       })).buffer
 
-      let result = cbor.decode(innerData)
-      changeQrResult(<JSONPretty json={result} />)
+      let unFormattedResult = cbor.decode(innerData)
+
+      let formattedResult = {
+
+      }
+
+      if (unFormattedResult["1"]){
+        formattedResult["Issuing Country"] = unFormattedResult["1"];
+      }
+
+      if (unFormattedResult["-260"] && unFormattedResult["-260"]["1"]){
+        let record = unFormattedResult["-260"]["1"]
+        formattedResult["Date Of Birth"] = record["dob"];
+
+        if (record["nam"]){
+          let nameRecord = record["nam"]
+          if (nameRecord["fn"]){
+            formattedResult["Surname"] = nameRecord["fn"]
+          }
+          if (nameRecord["gn"]){
+            formattedResult["Forename(s)"] = nameRecord["gn"]
+          }
+
+        }        
+
+        if (record["v"]){
+          // taken from: https://ec.europa.eu/health/sites/default/files/ehealth/docs/covid-certificate_json_specification_en.pdf
+          // and: https://ec.europa.eu/health/sites/default/files/ehealth/docs/digital-green-value-sets_en.pdf
+
+          let vaccineRecord = record["v"][0]
+
+          if (vaccineRecord["tg"]){
+            //disease-agent-targeted.json
+            formattedResult["Disease or agent targeted"] = vaccineRecord["tg"]
+            if (formattedResult["Disease or agent targeted"] === "840539006"){
+              formattedResult["Disease or agent targeted"] =  "COVID19"
+            }
+          }
+
+          if (vaccineRecord["vp"]){
+            //vaccine-prophylaxis.json
+            formattedResult["Vaccine or prophylaxis used"] = vaccineRecord["vp"]
+            if (formattedResult["Vaccine or prophylaxis used"] === "1119305005"){
+              formattedResult["Vaccine or prophylaxis used"] =  "SARS-CoV2 antigen vaccine"
+            } else if (formattedResult["Vaccine or prophylaxis used"] === "1119349007"){
+              formattedResult["Vaccine or prophylaxis used"] =  "7 SARS-CoV2 mRNA vaccine"
+            } else if (formattedResult["Vaccine or prophylaxis used"] === "J07BX03"){
+              formattedResult["Vaccine or prophylaxis used"] =  "covid-19 vaccines"
+            } 
+          }
+
+          if (vaccineRecord["mp"]){
+            //vaccine-medicinal-product.json
+            const mp = vaccineRecord["mp"]
+            if (mp === "EU/1/20/1528") {
+              formattedResult["Vaccine Product"] = "Comirnaty"
+            } else if (mp === "EU/1/20/1507") {
+              formattedResult["Vaccine Product"] = "Spikevax (previously COVID-19 Vaccine Moderna)"
+            } else if (mp === "EU/1/21/1529") {
+              formattedResult["Vaccine Product"] = "Vaxzevria"
+            } else if (mp === "EU/1/20/1525") {
+              formattedResult["Vaccine Product"] = "COVID-19 Vaccine Janssen"
+            } else {
+              formattedResult["Vaccine Product"] = vaccineRecord["mp"]
+            }            
+          }
+
+          if (vaccineRecord["ma"]){
+            //vaccine-mah-manf.json
+            const maufacturer = vaccineRecord["ma"]
+            if (maufacturer === "ORG-100006270") {
+              formattedResult["Vaccine Manufacturer"] = "Curevac AG"
+            } else if (maufacturer === "ORG-100013793") {
+              formattedResult["Vaccine Manufacturer"] = "CanSino Biologics"
+            } else if (maufacturer === "ORG-100001699") {
+              formattedResult["Vaccine Manufacturer"] = "AstraZeneca AB"
+            } else if (maufacturer === "ORG-100030215") {
+              formattedResult["Vaccine Manufacturer"] = "Biontech Manufacturing GmbH"
+            } else if (maufacturer === "ORG-100001417") {
+              formattedResult["Vaccine Manufacturer"] = "Janssen-Cilag International"
+            } else if (maufacturer === "ORG-100031184") {
+              formattedResult["Vaccine Manufacturer"] = "Moderna Biotech Spain S.L."
+            } else if (maufacturer === "ORG-100020693") {
+              formattedResult["Vaccine Manufacturer"] = "China Sinopharm International Corp. - Beijing location"
+            } else if (maufacturer === "ORG100010771") {
+              formattedResult["Vaccine Manufacturer"] = "Sinopharm Weiqida Europe Pharmaceutical s.r.o. - Prague location"
+            } else if (maufacturer === "ORG100024420") {
+              formattedResult["Vaccine Manufacturer"] = "Sinopharm Zhijun (Shenzhen) Pharmaceutical Co. Ltd. - Shenzhen location"
+            } else if (maufacturer === "ORG100032020") {
+              formattedResult["Vaccine Manufacturer"] = "Novavax CZ AS"
+            } else if (maufacturer === "ORG100001981") {
+              formattedResult["Vaccine Manufacturer"] = "Serum Institute Of India Private Limited"
+            } else {
+              formattedResult["Vaccine Manufacturer"] = vaccineRecord["ma"]
+            }            
+          }
+
+          if (vaccineRecord["dn"]){
+            formattedResult["Total Number of Administered Doses"] = vaccineRecord["dn"]
+          }
+
+          if (vaccineRecord["sd"]){
+            formattedResult["Total Number of Expected Doses"] = vaccineRecord["sd"]
+          }
+
+          if (vaccineRecord["dt"]){
+            formattedResult["Date of Vaccination"] = vaccineRecord["dt"]
+          }
+
+          if (vaccineRecord["co"]){
+            formattedResult["Country where vaccine administered"] = vaccineRecord["co"]
+          }
+
+          if (vaccineRecord["is"]){
+            formattedResult["Certificate Issuer"] = vaccineRecord["is"]
+          }
+
+          if (vaccineRecord["ci"]){
+            formattedResult["Certificate Identifier"] = vaccineRecord["ci"]
+          }
+
+        }
+      }
+
+      changeQrResult(<JSONPretty json={formattedResult} />)
       
 
     }
