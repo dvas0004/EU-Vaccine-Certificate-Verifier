@@ -70,67 +70,99 @@ function App() {
 
           if (vaccineRecord["tg"]){
             //disease-agent-targeted.json
-            formattedResult["Disease or agent targeted"] = vaccineRecord["tg"]
-            if (formattedResult["Disease or agent targeted"] === "840539006"){
-              formattedResult["Disease or agent targeted"] =  "COVID19"
+            switch (vaccineRecord["tg"]) {
+              case "840539006":
+                formattedResult["Disease or agent targeted"] =  "COVID19"
+                break;
+            
+              default:
+                formattedResult["Disease or agent targeted"] = vaccineRecord["tg"]
+                break;
             }
           }
 
           if (vaccineRecord["vp"]){
             //vaccine-prophylaxis.json
-            formattedResult["Vaccine or prophylaxis used"] = vaccineRecord["vp"]
-            if (formattedResult["Vaccine or prophylaxis used"] === "1119305005"){
-              formattedResult["Vaccine or prophylaxis used"] =  "SARS-CoV2 antigen vaccine"
-            } else if (formattedResult["Vaccine or prophylaxis used"] === "1119349007"){
-              formattedResult["Vaccine or prophylaxis used"] =  "7 SARS-CoV2 mRNA vaccine"
-            } else if (formattedResult["Vaccine or prophylaxis used"] === "J07BX03"){
-              formattedResult["Vaccine or prophylaxis used"] =  "covid-19 vaccines"
-            } 
+            switch (vaccineRecord["vp"]) {
+              case "1119305005":
+                formattedResult["Vaccine or prophylaxis used"] =  "SARS-CoV2 antigen vaccine"
+                break;
+              case "1119349007":
+                formattedResult["Vaccine or prophylaxis used"] =  "7 SARS-CoV2 mRNA vaccine"
+                break;
+              case "J07BX03":
+                formattedResult["Vaccine or prophylaxis used"] =  "covid-19 vaccines"
+                break;            
+              default:
+                formattedResult["Vaccine or prophylaxis used"] = vaccineRecord["vp"]
+                break;
+            }
+            
           }
 
           if (vaccineRecord["mp"]){
             //vaccine-medicinal-product.json
             const mp = vaccineRecord["mp"]
-            if (mp === "EU/1/20/1528") {
-              formattedResult["Vaccine Product"] = "Comirnaty"
-            } else if (mp === "EU/1/20/1507") {
-              formattedResult["Vaccine Product"] = "Spikevax (previously COVID-19 Vaccine Moderna)"
-            } else if (mp === "EU/1/21/1529") {
-              formattedResult["Vaccine Product"] = "Vaxzevria"
-            } else if (mp === "EU/1/20/1525") {
-              formattedResult["Vaccine Product"] = "COVID-19 Vaccine Janssen"
-            } else {
-              formattedResult["Vaccine Product"] = vaccineRecord["mp"]
-            }            
+
+            switch (mp) {
+              case "EU/1/20/1528":
+                formattedResult["Vaccine Product"] = "Comirnaty"
+                break;
+              case "EU/1/20/1507":
+                formattedResult["Vaccine Product"] = "Spikevax (previously COVID-19 Vaccine Moderna)"
+                break;
+              case "EU/1/21/1529":
+                formattedResult["Vaccine Product"] = "Vaxzevria"
+                break;
+              case "EU/1/20/1525":
+                formattedResult["Vaccine Product"] = "COVID-19 Vaccine Janssen"
+                break;
+              default:
+                formattedResult["Vaccine Product"] = vaccineRecord["mp"]
+                break;
+            }
           }
 
           if (vaccineRecord["ma"]){
             //vaccine-mah-manf.json
             const maufacturer = vaccineRecord["ma"]
-            if (maufacturer === "ORG-100006270") {
+            switch (maufacturer) {
+            case "ORG-100006270":
               formattedResult["Vaccine Manufacturer"] = "Curevac AG"
-            } else if (maufacturer === "ORG-100013793") {
+              break;
+            case "ORG-100013793":
               formattedResult["Vaccine Manufacturer"] = "CanSino Biologics"
-            } else if (maufacturer === "ORG-100001699") {
+              break;
+            case "ORG-100001699":
               formattedResult["Vaccine Manufacturer"] = "AstraZeneca AB"
-            } else if (maufacturer === "ORG-100030215") {
+              break;
+            case "ORG-100030215":
               formattedResult["Vaccine Manufacturer"] = "Biontech Manufacturing GmbH"
-            } else if (maufacturer === "ORG-100001417") {
+              break;
+            case "ORG-100001417":
               formattedResult["Vaccine Manufacturer"] = "Janssen-Cilag International"
-            } else if (maufacturer === "ORG-100031184") {
+              break;
+            case "ORG-100031184":
               formattedResult["Vaccine Manufacturer"] = "Moderna Biotech Spain S.L."
-            } else if (maufacturer === "ORG-100020693") {
+              break;
+            case "ORG-100020693":
               formattedResult["Vaccine Manufacturer"] = "China Sinopharm International Corp. - Beijing location"
-            } else if (maufacturer === "ORG100010771") {
+              break;
+            case "ORG100010771":
               formattedResult["Vaccine Manufacturer"] = "Sinopharm Weiqida Europe Pharmaceutical s.r.o. - Prague location"
-            } else if (maufacturer === "ORG100024420") {
+              break;
+            case "ORG100024420":
               formattedResult["Vaccine Manufacturer"] = "Sinopharm Zhijun (Shenzhen) Pharmaceutical Co. Ltd. - Shenzhen location"
-            } else if (maufacturer === "ORG100032020") {
+              break;
+            case "ORG100032020":
               formattedResult["Vaccine Manufacturer"] = "Novavax CZ AS"
-            } else if (maufacturer === "ORG100001981") {
+              break;
+            case "ORG100001981":
               formattedResult["Vaccine Manufacturer"] = "Serum Institute Of India Private Limited"
-            } else {
+              break;
+            default:
               formattedResult["Vaccine Manufacturer"] = vaccineRecord["ma"]
+              break;
             }            
           }
 
