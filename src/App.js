@@ -16,8 +16,7 @@ const qrPreviewSize = {
   margin: 10
 }
 
-// included this as a debugging tool to help in conversion
-function buf2hex(buffer) { 
+function buf2hex(buffer) { // buffer is an ArrayBuffer
   return [...buffer]
       .map(x => x.toString(16).padStart(2, '0'))
       .join('');
@@ -27,12 +26,13 @@ function App() {
 
   const [qrResult, changeQrResult] = useState()
 
-  const handleScan = data => {
+  const handleScan = data => {    
     if (data) {
 
       let b45EncodedData = data.replace("HC1:", "")      
       let b45DecodedData = base45.decode(b45EncodedData)      
-      let token = pako.inflate(b45DecodedData)     
+      let token = pako.inflate(b45DecodedData)
+      
       
       let outerdata = cbor.decode(token.buffer)[2]
 
@@ -42,6 +42,7 @@ function App() {
       })).buffer
 
       let unFormattedResult = cbor.decode(innerData)
+      console.log(unFormattedResult);
 
       let formattedResult = {
 
@@ -100,7 +101,7 @@ function App() {
           if (vaccineRecord["ma"]){
             //vaccine-mah-manf.json
             const ma = vaccineRecord["ma"]
-            formattedResult["Vaccine Manufacturer"] = ma in vaccineManufacturer ? vaccineManufacturer["ma"] : ma
+            formattedResult["Vaccine Manufacturer"] = ma in vaccineManufacturer ? vaccineManufacturer[ma] : ma
                  
           }
 
@@ -131,11 +132,13 @@ function App() {
         }
       }
 
+      console.log(formattedResult)
       changeQrResult(<JSONPretty json={formattedResult} />)
       
 
     }
   }
+
 
   const handleError = err => {
     console.error(err)
