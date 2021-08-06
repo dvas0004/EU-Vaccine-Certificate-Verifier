@@ -1,9 +1,14 @@
 import React, { Fragment, useState } from 'react'
-import JSONPretty from 'react-json-prettify';
+import JSONPretty from 'react-json-prettify'
 import QrReader from 'react-qr-reader'
+import vaccineProphylaxis from './data/vaccine-prophylaxis.json'
+import medicialProduct from './data/vaccine-medicinal-product.json'
+import vaccineManufacturer from './data/vaccine-mah-manf.json'
+
 const base45 = require('base45');
 const pako = require('pako');
 const cbor = require('cbor-js')
+
 
 const qrPreviewSize = { 
   height: window.innerHeight-20,
@@ -83,87 +88,21 @@ function App() {
 
           if (vaccineRecord["vp"]){
             //vaccine-prophylaxis.json
-            switch (vaccineRecord["vp"]) {
-              case "1119305005":
-                formattedResult["Vaccine or prophylaxis used"] =  "SARS-CoV2 antigen vaccine"
-                break;
-              case "1119349007":
-                formattedResult["Vaccine or prophylaxis used"] =  "7 SARS-CoV2 mRNA vaccine"
-                break;
-              case "J07BX03":
-                formattedResult["Vaccine or prophylaxis used"] =  "covid-19 vaccines"
-                break;            
-              default:
-                formattedResult["Vaccine or prophylaxis used"] = vaccineRecord["vp"]
-                break;
-            }
-            
+            const vp = vaccineRecord["vp"]
+            formattedResult["Vaccine or prophylaxis used"] = vp in vaccineProphylaxis ? vaccineProphylaxis[vp] : vp            
           }
 
           if (vaccineRecord["mp"]){
             //vaccine-medicinal-product.json
             const mp = vaccineRecord["mp"]
-
-            switch (mp) {
-              case "EU/1/20/1528":
-                formattedResult["Vaccine Product"] = "Comirnaty"
-                break;
-              case "EU/1/20/1507":
-                formattedResult["Vaccine Product"] = "Spikevax (previously COVID-19 Vaccine Moderna)"
-                break;
-              case "EU/1/21/1529":
-                formattedResult["Vaccine Product"] = "Vaxzevria"
-                break;
-              case "EU/1/20/1525":
-                formattedResult["Vaccine Product"] = "COVID-19 Vaccine Janssen"
-                break;
-              default:
-                formattedResult["Vaccine Product"] = vaccineRecord["mp"]
-                break;
-            }
+            formattedResult["Vaccine Product"] = mp in medicialProduct ? medicialProduct[mp] : mp                        
           }
 
           if (vaccineRecord["ma"]){
             //vaccine-mah-manf.json
-            const maufacturer = vaccineRecord["ma"]
-            switch (maufacturer) {
-            case "ORG-100006270":
-              formattedResult["Vaccine Manufacturer"] = "Curevac AG"
-              break;
-            case "ORG-100013793":
-              formattedResult["Vaccine Manufacturer"] = "CanSino Biologics"
-              break;
-            case "ORG-100001699":
-              formattedResult["Vaccine Manufacturer"] = "AstraZeneca AB"
-              break;
-            case "ORG-100030215":
-              formattedResult["Vaccine Manufacturer"] = "Biontech Manufacturing GmbH"
-              break;
-            case "ORG-100001417":
-              formattedResult["Vaccine Manufacturer"] = "Janssen-Cilag International"
-              break;
-            case "ORG-100031184":
-              formattedResult["Vaccine Manufacturer"] = "Moderna Biotech Spain S.L."
-              break;
-            case "ORG-100020693":
-              formattedResult["Vaccine Manufacturer"] = "China Sinopharm International Corp. - Beijing location"
-              break;
-            case "ORG100010771":
-              formattedResult["Vaccine Manufacturer"] = "Sinopharm Weiqida Europe Pharmaceutical s.r.o. - Prague location"
-              break;
-            case "ORG100024420":
-              formattedResult["Vaccine Manufacturer"] = "Sinopharm Zhijun (Shenzhen) Pharmaceutical Co. Ltd. - Shenzhen location"
-              break;
-            case "ORG100032020":
-              formattedResult["Vaccine Manufacturer"] = "Novavax CZ AS"
-              break;
-            case "ORG100001981":
-              formattedResult["Vaccine Manufacturer"] = "Serum Institute Of India Private Limited"
-              break;
-            default:
-              formattedResult["Vaccine Manufacturer"] = vaccineRecord["ma"]
-              break;
-            }            
+            const ma = vaccineRecord["ma"]
+            formattedResult["Vaccine Manufacturer"] = ma in vaccineManufacturer ? vaccineManufacturer["ma"] : ma
+                 
           }
 
           if (vaccineRecord["dn"]){
