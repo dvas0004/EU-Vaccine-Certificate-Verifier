@@ -154,6 +154,7 @@ function App() {
           <p>To scan again please reload webpage...</p>
         </Fragment>  : <QrReader
           delay={300}
+          resolution={1200}
           onError={handleError}
           onScan={handleScan}
           style={qrPreviewSize}
